@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>PHP library for Cassandra by evseevnn</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">PHP library for Cassandra</h1>
+        <p class="header">PHP library for Cassandra database via a binary protocol.</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/evseevnn/php-cassandra-binary/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/evseevnn/php-cassandra-binary/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/evseevnn/php-cassandra-binary">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/evseevnn">evseevnn</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="php-library-for-cassandra" class="anchor" href="#php-library-for-cassandra"><span class="octicon octicon-link"></span></a>PHP library for Cassandra</h1>
+
+<p>Cassandra client library for PHP, using the native binary protocol.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>PHP 5.4+ is required. There is no need for additional libraries.</p>
+
+<p>Add repository to composer.json</p>
+
+<pre><code>    ...
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/evseevnn/php-cassandra-binary"
+        }
+    ],
+    ...
+</code></pre>
+
+<p>Append dependency</p>
+
+<pre><code>    ...
+    "require": {
+        ...
+        "evseevnn/php-cassandra-binary": "dev-master"
+    }
+    ...
+</code></pre>
+
+<h2>
+<a name="base-using" class="anchor" href="#base-using"><span class="octicon octicon-link"></span></a>Base Using</h2>
+
+<div class="highlight highlight-php"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+
+<span class="nv">$nodes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'127.0.0.1'</span><span class="p">,</span>
+    <span class="s1">'192.168.0.2:8882'</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">'username'</span> <span class="o">=&gt;</span> <span class="s1">'admin'</span><span class="p">,</span>
+        <span class="s1">'password'</span> <span class="o">=&gt;</span> <span class="s1">'pass'</span>
+    <span class="p">]</span>
+<span class="p">];</span>
+
+<span class="c1">// Connect to database.</span>
+<span class="nv">$database</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cassandra\Database</span><span class="p">(</span><span class="nv">$nodes</span><span class="p">,</span> <span class="s1">'my_keyspace'</span><span class="p">);</span>
+<span class="nv">$database</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">();</span>
+
+<span class="c1">// Run query.</span>
+<span class="nv">$users</span> <span class="o">=</span> <span class="nv">$database</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">'SELECT * FROM "users" WHERE "id" = :id'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'id'</span> <span class="o">=&gt;</span> <span class="s1">'c5420d81-499e-4c9c-ac0c-fa6ba3ebc2bc'</span><span class="p">]);</span>
+
+<span class="nb">var_dump</span><span class="p">(</span><span class="nv">$users</span><span class="p">);</span>
+<span class="cm">/*</span>
+<span class="cm">    result:</span>
+<span class="cm">        array(</span>
+<span class="cm">            [0] =&gt; array(</span>
+<span class="cm">                'id' =&gt; 'c5420d81-499e-4c9c-ac0c-fa6ba3ebc2bc',</span>
+<span class="cm">                'name' =&gt; 'userName',</span>
+<span class="cm">                'email' =&gt; 'user@email.com'</span>
+<span class="cm">            )</span>
+<span class="cm">        )</span>
+<span class="cm">*/</span>
+
+</pre></div>
+
+<h2>
+<a name="using-transaction" class="anchor" href="#using-transaction"><span class="octicon octicon-link"></span></a>Using transaction</h2>
+
+<div class="highlight highlight-php"><pre>    <span class="nv">$database</span><span class="o">-&gt;</span><span class="na">beginBatch</span><span class="p">();</span>
+    <span class="c1">// all INSERT, UPDATE, DELETE query append into batch query stack for execution after applyBatch</span>
+    <span class="nv">$uuid</span> <span class="o">=</span> <span class="nv">$database</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">'SELECT uuid() as "uuid" FROM system.schema_keyspaces LIMIT 1;'</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'uuid'</span><span class="p">];</span>
+    <span class="nv">$database</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span>
+            <span class="s1">'INSERT INTO "users" ("id", "name", "email") VALUES (:id, :name, :email);'</span><span class="p">,</span>
+            <span class="p">[</span>
+                <span class="s1">'id'</span> <span class="o">=&gt;</span> <span class="nv">$uuid</span><span class="p">,</span>
+                <span class="s1">'name'</span> <span class="o">=&gt;</span> <span class="s1">'Mark'</span><span class="p">,</span>
+                <span class="s1">'email'</span> <span class="o">=&gt;</span> <span class="s1">'mark@facebook.com'</span>
+            <span class="p">]</span>
+        <span class="p">);</span>
+
+    <span class="nv">$database</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span>
+            <span class="s1">'DELETE FROM "users" WHERE "email" = :email;'</span><span class="p">,</span>
+            <span class="p">[</span>
+                <span class="s1">'email'</span> <span class="o">=&gt;</span> <span class="s1">'durov@vk.com'</span>
+            <span class="p">]</span>
+        <span class="p">);</span>
+    <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$database</span><span class="o">-&gt;</span><span class="na">applyBatch</span><span class="p">();</span>
+</pre></div>
+
+<h2>
+<a name="supported-datatypes" class="anchor" href="#supported-datatypes"><span class="octicon octicon-link"></span></a>Supported datatypes</h2>
+
+<p>All types are supported.</p>
+
+<ul>
+<li>
+<em>ascii, varchar, text</em>
+Result will be a string.</li>
+<li>
+<em>bigint, counter, varint</em>
+Converted to strings using bcmath.</li>
+<li>
+<em>blob</em>
+Result will be a string.</li>
+<li>
+<em>boolean</em>
+Result will be a boolean as well.</li>
+<li>
+<em>decimal</em>
+Converted to strings using bcmath.</li>
+<li>
+<em>double, float, int</em>
+Result is using native PHP datatypes.</li>
+<li>
+<em>timestamp</em>
+Converted to integer. Milliseconds precision is lost.</li>
+<li>
+<em>uuid, timeuuid, inet</em>
+No native PHP datatype available. Converted to strings.</li>
+<li>
+<em>list, set</em>
+Converted to array (numeric keys).</li>
+<li>
+<em>map</em>
+Converted to keyed array.</li>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
