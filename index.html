@@ -44,19 +44,7 @@
 
 <p>PHP 5.4+ is required. There is no need for additional libraries.</p>
 
-<p>Add repository to composer.json</p>
-
-<pre><code>    ...
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/evseevnn/php-cassandra-binary"
-        }
-    ],
-    ...
-</code></pre>
-
-<p>Append dependency</p>
+<p>Append dependency into composer.json</p>
 
 <pre><code>    ...
     "require": {
@@ -97,6 +85,11 @@
 <span class="cm">            )</span>
 <span class="cm">        )</span>
 <span class="cm">*/</span>
+
+<span class="c1">// Keyspace can be changed at runtime</span>
+<span class="nv">$database</span><span class="o">-&gt;</span><span class="na">setKeyspace</span><span class="p">(</span><span class="s1">'my_other_keyspace'</span><span class="p">);</span>
+<span class="c1">// Get from other keyspace</span>
+<span class="nv">$urlsFromFacebook</span> <span class="o">=</span> <span class="nv">$database</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">'SELECT * FROM "urls" WHERE "host" = :host'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'host'</span> <span class="o">=&gt;</span> <span class="s1">'facebook.com'</span><span class="p">]);</span>
 
 </pre></div>
 
