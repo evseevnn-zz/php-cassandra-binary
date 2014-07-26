@@ -151,13 +151,15 @@ class Database {
 	 * Send query into database
 	 * @param string $cql
 	 * @param array $values
-	 * @param int $consistency
+	 * @param bool|int $consistency
+	 * @throws Exception\ConnectionException
 	 * @throws Exception\QueryException
 	 * @throws Exception\CassandraException
 	 * @return array|null
 	 */
-	public function query($cql, array $values = [], $consistency = null) {
-		if ($consistency === null) {
+	public function query($cql, array $values = [], $consistency = false) {
+		if (!$this->connection->isConnected()) throw new ConnectionException('Cannot set connection.');
+		if (false === $consistency) {
 			$consistency =
 				(strtoupper(substr($cql, 0, 6)) === 'SELECT') ?
 					$this->options['consistency_read'] : $this->options['consistency_write'];
@@ -206,5 +208,14 @@ class Database {
 			);
 			if ($response->getType() === OpcodeEnum::ERROR) throw new CassandraException($response->getData());
 		}
+	}
+
+	/**
+	 * @param $cql
+	 * @return int
+	 */
+	private function getConsistencyLevelForQuery($cql) {
+		return (strtoupper(substr($cql, 0, 6)) === 'SELECT') ?
+			$this->options['consistency_read'] : $this->options['consistency_write'];
 	}
 }
