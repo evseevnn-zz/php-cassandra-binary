@@ -23,11 +23,13 @@ class Database {
 	private $connection;
 
 	/**
-	 * Connection options
+	 * Library options
 	 * @var array
 	 */
 	private $options = [
-		'CQL_VERSION' => '3.0.0'
+		'consistency_read' => ConsistencyEnum::CONSISTENCY_ANY,
+		'consistency_write' => ConsistencyEnum::CONSISTENCY_QUORUM,
+		'connection_options' => ['CQL_VERSION' => '3.0.0']
 	];
 
 	/**
@@ -67,7 +69,7 @@ class Database {
 		if ($this->connection->isConnected()) return true;
 		$this->connection->connect();
 		$response = $this->connection->sendRequest(
-			RequestFactory::startup($this->options)
+			RequestFactory::startup($this->options['connection_options'])
 		);
 		$responseType = $response->getType();
 		switch($responseType) {
@@ -154,8 +156,14 @@ class Database {
 	 * @throws Exception\CassandraException
 	 * @return array|null
 	 */
-	public function query($cql, array $values = [], $consistency = ConsistencyEnum::CONSISTENCY_QUORUM) {
-		if ($this->batchQuery && in_array(substr($cql, 0, 6), ['INSERT', 'UPDATE', 'DELETE'])) {
+	public function query($cql, array $values = [], $consistency = null) {
+		if ($consistency === null) {
+			$consistency =
+				(strtoupper(substr($cql, 0, 6)) === 'SELECT') ?
+					$this->options['consistency_read'] : $this->options['consistency_write'];
+		}
+
+		if ($this->batchQuery && in_array(strtoupper(substr($cql, 0, 6)), ['INSERT', 'UPDATE', 'DELETE'])) {
 			$this->appendQueryToStack($cql, $values);
 			return true;
 		}
