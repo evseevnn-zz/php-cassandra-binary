@@ -39,7 +39,7 @@ class Node {
 		$this->host = $host;
 		if (strstr($this->host, ':')) {
 			$this->port = (int)substr(strstr($this->host, ':'), 1);
-			$this->host = substr($this->host, 0, -1 - strlen($this->port));
+			$this->host = substr($this->host, 0, -(strlen($this->port) + 1));
 			if (!$this->port) {
 				throw new \InvalidArgumentException('Invalid port number');
 			}
