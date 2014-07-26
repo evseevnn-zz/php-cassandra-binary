@@ -45,8 +45,6 @@ class BinaryData {
 				return $this->getBlob();
 
 			case DataTypeEnum::TIMESTAMP:
-				return $this->getTimestamp();
-
 			case DataTypeEnum::COUNTER:
 			case DataTypeEnum::BIGINT:
 			case DataTypeEnum::VARINT:
@@ -145,15 +143,6 @@ class BinaryData {
 		$higher = ($value & $highMap) >>32;
 		$lower = $value & $lowMap;
 		return pack('NN', $higher, $lower);
-	}
-
-	/**
-	 * @return string
-	 */
-	private function getTimestamp() {
-		// for use timestamp = 10 digits. happy for time()!
-		if (strlen($this->value) === 10) $this->value *= 1000;
-		return $this->getBigInt();
 	}
 
 	/**
