@@ -27,8 +27,8 @@ class Database {
 	 * @var array
 	 */
 	private $options = [
-		'consistency_read' => ConsistencyEnum::CONSISTENCY_ANY,
-		'consistency_write' => ConsistencyEnum::CONSISTENCY_QUORUM,
+		'consistency_read' => ConsistencyEnum::ONE,
+		'consistency_write' => ConsistencyEnum::QUORUM,
 		'connection_options' => ['CQL_VERSION' => '3.0.0']
 	];
 
@@ -113,7 +113,7 @@ class Database {
 	/**
 	 * Exec transaction
 	 */
-	public function applyBatch($consistency = ConsistencyEnum::CONSISTENCY_QUORUM) {
+	public function applyBatch($consistency = ConsistencyEnum::QUORUM) {
 		$this->batchQuery .= 'APPLY BATCH;';
 		// exec
 		$result = $this->query($this->batchQuery, $this->batchQueryData, $consistency);
@@ -159,11 +159,7 @@ class Database {
 	 */
 	public function query($cql, array $values = [], $consistency = false) {
 		if (!$this->connection->isConnected()) throw new ConnectionException('Cannot set connection.');
-		if (false === $consistency) {
-			$consistency =
-				(strtoupper(substr($cql, 0, 6)) === 'SELECT') ?
-					$this->options['consistency_read'] : $this->options['consistency_write'];
-		}
+		$consistency || $consistency = $this->getConsistencyLevelForQuery($cql);
 
 		if ($this->batchQuery && in_array(strtoupper(substr($cql, 0, 6)), ['INSERT', 'UPDATE', 'DELETE'])) {
 			$this->appendQueryToStack($cql, $values);
@@ -204,7 +200,7 @@ class Database {
 		$this->keyspace = $keyspace;
 		if ($this->connection->isConnected()) {
 			$response = $this->connection->sendRequest(
-				RequestFactory::query("USE {$this->keyspace};", ConsistencyEnum::CONSISTENCY_QUORUM)
+				RequestFactory::query("USE {$this->keyspace};", ConsistencyEnum::QUORUM)
 			);
 			if ($response->getType() === OpcodeEnum::ERROR) throw new CassandraException($response->getData());
 		}
