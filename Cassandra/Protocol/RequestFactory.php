@@ -150,7 +150,7 @@ final class RequestFactory {
 			} else {
 				$value = null;
 			}
-			$binary = new BinaryData($column['type'], $value);
+			$binary = ConverterDataType::getBinary($column['type'], $value);
 			$body .= pack('N', strlen($binary)) . $binary;
 		}
 		$body .= pack('n', $consistency);
