@@ -26,33 +26,23 @@ class Cluster {
 
 	/**
 	 * @return Node
-	 * @throws \InvalidArgumentException
 	 * @throws Exception\ClusterException
 	 */
 	public function getRandomNode() {
 		if (empty($this->nodes)) throw new ClusterException('Node list is empty.');
-		shuffle($this->nodes);
-		while(!empty($this->nodes)) {
-			$endNode = end($this->nodes);
-			try {
-				if ((array)$endNode === $endNode) {
-					$host = key($this->nodes);
-					$node = new Node($host, $endNode);
-					unset($this->nodes[$host]);
-				} elseif (is_string($endNode)) {
-					$node = new Node($endNode);
-					unset($this->nodes[$endNode]);
-				} else {
-					trigger_error('Incorrect type for info of node.');
-					unset($this->nodes[$endNode]);
-				}
-				break;
-			} catch (\InvalidArgumentException $e) {
-				trigger_error($e->getMessage());
+		$nodeKey = array_rand($this->nodes);
+		$node = $this->nodes[$nodeKey];
+		try {
+			if ((array)$node === $node) {
+				$node = new Node($nodeKey, $node);
+				unset($this->nodes[$nodeKey]);
+			} else {
+				$node = new Node($node);
+				unset($this->nodes[$nodeKey]);
 			}
+		} catch (\InvalidArgumentException $e) {
+			trigger_error($e->getMessage());
 		}
-
-		if (empty($node)) throw new \InvalidArgumentException('Incorrect connection parameters for all nodes.');
 
 		return $node;
 	}
