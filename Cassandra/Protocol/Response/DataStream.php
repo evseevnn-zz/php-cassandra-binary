@@ -94,9 +94,19 @@ class DataStream {
 	 * @return string
 	 */
 	public function readBytes() {
-		$length = $this->readInt();
-		return $this->read($length);
-	}
+                $length = $this->readInt();
+                return $this->read($length);
+        }
+        
+        /**
+         * Read binary data
+         *
+         * @return string
+         */
+        public function readBlob() {
+                $length = strlen($this->data);
+                return $this->read($length);
+        }
 
 	/**
 	 * Read uuid.
@@ -236,8 +246,9 @@ class DataStream {
 			case DataTypeEnum::VARINT:
 				return $this->readVarint();
 			case DataTypeEnum::CUSTOM:
-			case DataTypeEnum::BLOB:
 				return $this->readBytes();
+                        case DataTypeEnum::BLOB:
+                            return $this->readBlob();
 			case DataTypeEnum::BOOLEAN:
 				return $this->readBoolean();
 			case DataTypeEnum::DECIMAL:
