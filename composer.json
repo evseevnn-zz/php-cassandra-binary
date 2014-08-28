@@ -1,5 +1,5 @@
 {
-	"name": "evseevnn/php-cassandra-binary",
+	"name": "markdunphy/php-cassandra-binary",
 	"description": "PHP library for Cassandra database via a binary protocol",
 	"minimum-stability": "stable",
 	"license": "MIT",
@@ -7,12 +7,21 @@
 		{
 			"name": "Evseev Nikolay",
 			"email": "evseevnn@gmail.com"
+		},
+		{
+			"name": "Mark Dunphy",
+			"email": "dunphy@adobe.com"
 		}
 	],
 	"require": {
 		"php": ">=5.4.0"
 	},
+	"require-dev": {
+    "phpunit/phpunit": "4.2.*"
+  },
 	"autoload": {
-		"psr-4": { "Cassandra\\": "Cassandra/" }
+		"psr-4": {
+			"markdunphy\\Cassandra\\": "src/"
+		}
 	}
 }
