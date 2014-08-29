@@ -1,7 +1,7 @@
 <?php
-namespace Cassandra\Protocol\Response;
+namespace evseevnn\Cassandra\Protocol\Response;
 
-use Cassandra\Enum\DataTypeEnum;
+use evseevnn\Cassandra\Enum\DataTypeEnum;
 
 class DataStream {
 

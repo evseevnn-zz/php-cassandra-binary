@@ -1,12 +1,12 @@
 <?php
-namespace Cassandra;
-use Cassandra\Enum\ConsistencyEnum;
-use Cassandra\Enum\OpcodeEnum;
-use Cassandra\Exception\CassandraException;
-use Cassandra\Exception\ConnectionException;
-use Cassandra\Exception\QueryException;
-use Cassandra\Protocol\RequestFactory;
-use Cassandra\Protocol\Response\Rows;
+namespace evseevnn\Cassandra;
+use evseevnn\Cassandra\Enum\ConsistencyEnum;
+use evseevnn\Cassandra\Enum\OpcodeEnum;
+use evseevnn\Cassandra\Exception\CassandraException;
+use evseevnn\Cassandra\Exception\ConnectionException;
+use evseevnn\Cassandra\Exception\QueryException;
+use evseevnn\Cassandra\Protocol\RequestFactory;
+use evseevnn\Cassandra\Protocol\Response\Rows;
 
 class Database {
 

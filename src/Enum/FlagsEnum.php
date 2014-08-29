@@ -1,5 +1,5 @@
 <?php
-namespace Cassandra\Enum;
+namespace evseevnn\Cassandra\Enum;
 
 class FlagsEnum {
 	const COMPRESSION = 0x01;

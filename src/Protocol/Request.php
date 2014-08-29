@@ -1,5 +1,5 @@
 <?php
-namespace Cassandra\Protocol;
+namespace evseevnn\Cassandra\Protocol;
 
 class Request {
 

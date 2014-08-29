@@ -1,7 +1,7 @@
 <?php
-namespace Cassandra;
-use Cassandra\Cluster\Node;
-use Cassandra\Exception\ClusterException;
+namespace evseevnn\Cassandra;
+use evseevnn\Cassandra\Cluster\Node;
+use evseevnn\Cassandra\Exception\ClusterException;
 
 class Cluster {
 

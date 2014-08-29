@@ -1,7 +1,7 @@
 <?php
-namespace Cassandra\Cluster;
+namespace evseevnn\Cassandra\Cluster;
 
-use Cassandra\Exception\ConnectionException;
+use evseevnn\Cassandra\Exception\ConnectionException;
 
 class Node {
 

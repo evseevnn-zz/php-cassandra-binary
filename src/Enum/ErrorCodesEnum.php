@@ -1,5 +1,5 @@
 <?php
-namespace Cassandra\Enum;
+namespace evseevnn\Cassandra\Enum;
 
 class ErrorCodesEnum {
 	const SERVER_ERROR = 0x0000;
