@@ -1,6 +1,6 @@
 <?php
-namespace Cassandra\Protocol;
-use Cassandra\Enum\OpcodeEnum;
+namespace evseevnn\Cassandra\Protocol;
+use evseevnn\Cassandra\Enum\OpcodeEnum;
 
 final class RequestFactory {
 
@@ -24,7 +24,7 @@ final class RequestFactory {
 	 * This is optional, if not specified no compression will be used.
 	 *
 	 * @param array $option
-	 * @return \Cassandra\Protocol\Request
+	 * @return \evseevnn\Cassandra\Protocol\Request
 	 */
 	public static function startup(array $option = []) {
 		$body = pack('n', count($option));
@@ -53,7 +53,7 @@ final class RequestFactory {
 	 *
 	 * @param string $user
 	 * @param string $password
-	 * @return \Cassandra\Protocol\Request
+	 * @return \evseevnn\Cassandra\Protocol\Request
 	 */
 	public static function credentials($user, $password) {
 		$body = pack('n', 2);
@@ -90,7 +90,7 @@ final class RequestFactory {
 	 *
 	 * @param string $cql
 	 * @param int $consistency
-	 * @return \Cassandra\Protocol\Request
+	 * @return \evseevnn\Cassandra\Protocol\Request
 	 */
 	public static function query($cql, $consistency) {
 		$body = pack('N', strlen($cql)) . $cql . pack('n', $consistency);
@@ -107,7 +107,7 @@ final class RequestFactory {
 	 * see Section 4.2.5).
 	 *
 	 * @param string $cql
-	 * @return \Cassandra\Protocol\Request
+	 * @return \evseevnn\Cassandra\Protocol\Request
 	 */
 	public static function prepare($cql) {
 		$body = pack('N', strlen($cql)) . $cql;
@@ -133,7 +133,7 @@ final class RequestFactory {
 	 * @param array $prepareData
 	 * @param array $values
 	 * @param int $consistency
-	 * @return \Cassandra\Protocol\Request
+	 * @return \evseevnn\Cassandra\Protocol\Request
 	 */
 	public static function execute(array $prepareData, array $values, $consistency) {
 		$body = pack('n', strlen($prepareData['id'])) . $prepareData['id'];

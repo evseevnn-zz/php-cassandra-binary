@@ -1,5 +1,5 @@
 <?php
-namespace Cassandra\Enum;
+namespace evseevnn\Cassandra\Enum;
 
 class VersionEnum {
 	const REQUEST = 0x01;

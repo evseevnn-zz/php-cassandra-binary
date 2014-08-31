@@ -1,13 +1,13 @@
 <?php
-namespace Cassandra\Protocol;
-use Cassandra\Enum\DataTypeEnum;
-use Cassandra\Enum\ErrorCodesEnum;
-use Cassandra\Enum\OpcodeEnum;
-use Cassandra\Enum\ResultTypeEnum;
-use Cassandra\Exception\ResponseException;
-use Cassandra\Protocol\Response\DataStream;
-use Cassandra\Protocol\Response\DataStream\TypeReader;
-use Cassandra\Protocol\Response\Rows;
+namespace evseevnn\Cassandra\Protocol;
+use evseevnn\Cassandra\Enum\DataTypeEnum;
+use evseevnn\Cassandra\Enum\ErrorCodesEnum;
+use evseevnn\Cassandra\Enum\OpcodeEnum;
+use evseevnn\Cassandra\Enum\ResultTypeEnum;
+use evseevnn\Cassandra\Exception\ResponseException;
+use evseevnn\Cassandra\Protocol\Response\DataStream;
+use evseevnn\Cassandra\Protocol\Response\DataStream\TypeReader;
+use evseevnn\Cassandra\Protocol\Response\Rows;
 
 class Response {
 

@@ -1,7 +1,7 @@
 <?php
-namespace Cassandra\Protocol\Response\DataStream;
-use Cassandra\Enum\DataTypeEnum;
-use Cassandra\Protocol\Response\DataStream;
+namespace evseevnn\Cassandra\Protocol\Response\DataStream;
+use evseevnn\Cassandra\Enum\DataTypeEnum;
+use evseevnn\Cassandra\Protocol\Response\DataStream;
 
 final class TypeReader {
 

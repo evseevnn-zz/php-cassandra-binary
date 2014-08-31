@@ -1,5 +1,5 @@
 <?php
-namespace Cassandra\Enum;
+namespace evseevnn\Cassandra\Enum;
 
 class ResultTypeEnum {
 	const VOID = 0x0001;

@@ -1,11 +1,11 @@
 <?php
-namespace Cassandra;
-use Cassandra\Cluster\Node;
-use Cassandra\Enum;
-use Cassandra\Exception\ConnectionException;
-use Cassandra\Protocol\Frame;
-use Cassandra\Protocol\Request;
-use Cassandra\Protocol\Response;
+namespace evseevnn\Cassandra;
+use evseevnn\Cassandra\Cluster\Node;
+use evseevnn\Cassandra\Enum;
+use evseevnn\Cassandra\Exception\ConnectionException;
+use evseevnn\Cassandra\Protocol\Frame;
+use evseevnn\Cassandra\Protocol\Request;
+use evseevnn\Cassandra\Protocol\Response;
 
 class Connection {
 
@@ -56,7 +56,7 @@ class Connection {
 
 	/**
 	 * @param Request $request
-	 * @return \Cassandra\Protocol\Response
+	 * @return \evseevnn\Cassandra\Protocol\Response
 	 */
 	public function sendRequest(Request $request) {
 		$frame = new Frame(Enum\VersionEnum::REQUEST, $request->getType(), $request);
@@ -94,7 +94,7 @@ class Connection {
 	}
 
 	/**
-	 * @return \Cassandra\Cluster\Node
+	 * @return \evseevnn\Cassandra\Cluster\Node
 	 */
 	public function getNode() {
 		return $this->node;

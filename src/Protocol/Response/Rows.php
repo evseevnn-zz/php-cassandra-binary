@@ -1,5 +1,5 @@
 <?php
-namespace Cassandra\Protocol\Response;
+namespace evseevnn\Cassandra\Protocol\Response;
 
 class Rows implements \Iterator, \Countable {
 

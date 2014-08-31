@@ -1,6 +1,6 @@
 <?php
-namespace Cassandra\Protocol;
-use Cassandra\Enum\DataTypeEnum;
+namespace evseevnn\Cassandra\Protocol;
+use evseevnn\Cassandra\Enum\DataTypeEnum;
 
 class BinaryData {
 

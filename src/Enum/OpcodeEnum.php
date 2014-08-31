@@ -1,5 +1,5 @@
 <?php
-namespace Cassandra\Enum;
+namespace evseevnn\Cassandra\Enum;
 
 class OpcodeEnum {
 	const ERROR = 0x00;
