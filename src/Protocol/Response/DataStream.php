@@ -64,9 +64,13 @@ class DataStream {
 	 *
 	 * @return int
 	 */
-	public function readInt() {
-		return unpack('N', $this->read(4))[1];
-	}
+    public function readInt($isCollectionElement = false) {
+        if ($isCollectionElement) {
+            $length = $this->readShort();
+            return unpack('N', $this->read($length))[1];
+        }
+        return unpack('N', $this->read(4))[1];
+    }
 
 	/**
 	 * Read string.
@@ -141,7 +145,7 @@ class DataStream {
 		$list = array();
 		$count = $this->readShort();
 		for ($i = 0; $i < $count; ++$i) {
-			$list[] = $this->readByType($valueType);
+			$list[] = $this->readByType($valueType, true);
 		}
 		return $list;
 	}
@@ -247,7 +251,7 @@ class DataStream {
 			case DataTypeEnum::FLOAT:
 				return $this->readFloat();
 			case DataTypeEnum::INT:
-				return $this->readInt();
+				return $this->readInt($isCollectionElement);
 			case DataTypeEnum::TIMESTAMP:
 				return $this->readTimestamp();
 			case DataTypeEnum::UUID:
