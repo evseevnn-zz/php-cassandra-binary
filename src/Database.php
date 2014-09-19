@@ -82,6 +82,7 @@ class Database {
 						$nodeOptions['password']
 					)
 				);
+				$responseType = $response->getType();
 		}
 		if ($responseType === OpcodeEnum::ERROR) throw new ConnectionException($response->getData());
 		if (!empty($this->keyspace)) $this->setKeyspace($this->keyspace);
