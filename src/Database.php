@@ -109,6 +109,16 @@ class Database {
 	}
 
 	/**
+	 * Start counter transaction
+	 */
+	public function beginCounterBatch() {
+		if (!$this->batchQuery) {
+			$this->batchQuery = "BEING COUNTER BATCH\n";
+			$this->batchQueryData = [];
+		}
+	}
+
+	/**
 	 * Exec transaction
 	 */
 	public function applyBatch($consistency = ConsistencyEnum::CONSISTENCY_QUORUM) {
