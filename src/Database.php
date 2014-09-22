@@ -114,7 +114,7 @@ class Database {
 	 */
 	public function beginCounterBatch() {
 		if (!$this->batchQuery) {
-			$this->batchQuery = "BEING COUNTER BATCH\n";
+			$this->batchQuery = "BEGIN COUNTER BATCH\n";
 			$this->batchQueryData = [];
 		}
 	}
@@ -124,6 +124,7 @@ class Database {
 	 */
 	public function applyBatch($consistency = ConsistencyEnum::CONSISTENCY_QUORUM) {
 		$this->batchQuery .= 'APPLY BATCH;';
+		var_dump($this->batchQuery);
 		// exec
 		$result = $this->query($this->batchQuery, $this->batchQueryData, $consistency);
 		// cleaning
