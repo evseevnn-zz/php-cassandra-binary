@@ -114,7 +114,7 @@ class Database {
 	 */
 	public function beginCounterBatch() {
 		if (!$this->batchQuery) {
-			$this->batchQuery = "BEING COUNTER BATCH\n";
+			$this->batchQuery = "BEGIN COUNTER BATCH\n";
 			$this->batchQueryData = [];
 		}
 	}
