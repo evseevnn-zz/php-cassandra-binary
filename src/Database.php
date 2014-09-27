@@ -120,6 +120,16 @@ class Database {
 	}
 
 	/**
+	 * Start unlogged transaction
+	 */
+	public function beginUnloggedBatch() {
+		if (!$this->batchQuery) {
+			$this->batchQuery = "BEGIN UNLOGGED BATCH\n";
+			$this->batchQueryData = [];
+		}
+	}
+
+	/**
 	 * Exec transaction
 	 */
 	public function applyBatch($consistency = ConsistencyEnum::CONSISTENCY_QUORUM) {
