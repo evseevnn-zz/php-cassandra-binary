@@ -207,8 +207,12 @@ class DataStream {
 	 *
 	 * @return string
 	 */
-	public function readVarint() {
-		list($higher, $lower) = array_values(unpack('N2', $this->data));
+	public function readVarint($isCollectionElement = false) {
+    if($isCollectionElement) {
+        $length = $this->readShort();
+    }
+
+		list($higher, $lower) = array_values(unpack('N2', $this->read(8)));
 		return $higher << 32 | $lower;
 	}
 
@@ -238,7 +242,7 @@ class DataStream {
 			case DataTypeEnum::BIGINT:
 			case DataTypeEnum::COUNTER:
 			case DataTypeEnum::VARINT:
-				return $this->readVarint();
+				return $this->readVarint($isCollectionElement);
 			case DataTypeEnum::CUSTOM:
 			case DataTypeEnum::BLOB:
 				return $this->readBytes();
