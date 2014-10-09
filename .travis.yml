@@ -1,0 +1,9 @@
+services:
+  - cassandra
+language: php
+php:
+  - 5.5
+  - 5.4
+  - hhvm
+install: composer install
+script: php ./vendor/bin/phpunit tests
