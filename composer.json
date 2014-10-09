@@ -19,6 +19,6 @@
 		"psr-4": { "evseevnn\\Cassandra\\": "src/" }
 	},
     "autoload-dev": {
-        "psr-4": { "evseevnn\\Cassandra\\Tests\\": "tests/" }
+        "psr-4": { "evseevnn\\Cassandra\\Tests\\": "tests" }
     }
 }
