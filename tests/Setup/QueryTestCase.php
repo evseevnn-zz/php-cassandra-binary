@@ -10,7 +10,7 @@
 namespace evseevnn\Cassandra\Tests\Setup;
 use evseevnn\Cassandra;
 
-class QueryTestCase extends \PHPUnit_Framework_TestCase {
+abstract class QueryTestCase extends \PHPUnit_Framework_TestCase {
 
     protected static $connection;
 
@@ -20,6 +20,7 @@ class QueryTestCase extends \PHPUnit_Framework_TestCase {
         self::$connection->connect();
         self::$connection->query("DROP KEYSPACE IF EXISTS testkeyspace;");
         self::$connection->query("CREATE KEYSPACE testkeyspace WITH replication = {   'class': 'SimpleStrategy',   'replication_factor': '1' };");
+        self::$connection->query("USE testkeyspace;");
     }
 
     public static function tearDownAfterClass()

@@ -97,7 +97,9 @@ class DataStream {
 	 *
 	 * @return string
 	 */
-	public function readBytes() {
+	public function readBytes($isCollectionElement = false) {
+    if ($isCollectionElement)
+        $this->readShort();
 		$length = $this->readInt();
 		return $this->read($length);
 	}
@@ -171,7 +173,10 @@ class DataStream {
 	 *
 	 * @return float
 	 */
-	public function readFloat() {
+	public function readFloat($isCollectionElement = false) {
+    if ($isCollectionElement) {
+        $length = $this->readShort();
+    }
 		return unpack('f', strrev($this->read(4)))[1];
 	}
 
@@ -180,7 +185,10 @@ class DataStream {
 	 *
 	 * @return double
 	 */
-	public function readDouble() {
+	public function readDouble($isCollectionElement = false) {
+    if ($isCollectionElement) {
+        $length = $this->readShort();
+    }
 		return unpack('d', strrev($this->read(8)))[1];
 	}
 
@@ -210,9 +218,25 @@ class DataStream {
 	public function readVarint($isCollectionElement = false) {
     if($isCollectionElement) {
         $length = $this->readShort();
+    } else {
+        $length = 8;
+    }
+    switch($length) {
+        case 8:
+            $unpack = 'N2';
+            break;
+        case 4:
+            $unpack = 'N';
+            break;
+        case 2:
+            $unpack = 'n';
+            break;
+        case 1:
+            $unpack = 'c';
+            break;
     }
 
-		list($higher, $lower) = array_values(unpack('N2', $this->read(8)));
+		list($higher, $lower) = array_values(unpack($unpack, $this->read($length)));
 		return $higher << 32 | $lower;
 	}
 
@@ -221,9 +245,12 @@ class DataStream {
 	 *
 	 * @return string
 	 */
-	public function readDecimal() {
+	public function readDecimal($isCollectionElement = false) {
+    if ($isCollectionElement) {
+        $length = $this->readShort();
+    }
 		$scale = $this->readInt();
-		$value = $this->readVarint();
+		$value = $this->readVarint($isCollectionElement);
 		$len = strlen($value);
 		return substr($value, 0, $len - $scale) . '.' . substr($value, $len - $scale);
 	}
@@ -245,15 +272,15 @@ class DataStream {
 				return $this->readVarint($isCollectionElement);
 			case DataTypeEnum::CUSTOM:
 			case DataTypeEnum::BLOB:
-				return $this->readBytes();
+				return $this->readBytes($isCollectionElement);
 			case DataTypeEnum::BOOLEAN:
 				return $this->readBoolean();
 			case DataTypeEnum::DECIMAL:
-				return $this->readDecimal();
+				return $this->readDecimal($isCollectionElement);
 			case DataTypeEnum::DOUBLE:
-				return $this->readDouble();
+				return $this->readDouble($isCollectionElement);
 			case DataTypeEnum::FLOAT:
-				return $this->readFloat();
+				return $this->readFloat($isCollectionElement);
 			case DataTypeEnum::INT:
 				return $this->readInt($isCollectionElement);
 			case DataTypeEnum::TIMESTAMP:
