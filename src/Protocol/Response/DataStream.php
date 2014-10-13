@@ -64,13 +64,13 @@ class DataStream {
 	 *
 	 * @return int
 	 */
-    public function readInt($isCollectionElement = false) {
-        if ($isCollectionElement) {
-            $length = $this->readShort();
-            return unpack('N', $this->read($length))[1];
-        }
-        return unpack('N', $this->read(4))[1];
-    }
+	public function readInt($isCollectionElement = false) {
+		if ($isCollectionElement) {
+			$length = $this->readShort();
+			return unpack('N', $this->read($length))[1];
+		}
+		return unpack('N', $this->read(4))[1];
+	}
 
 	/**
 	 * Read string.
@@ -98,8 +98,8 @@ class DataStream {
 	 * @return string
 	 */
 	public function readBytes($isCollectionElement = false) {
-    if ($isCollectionElement)
-        $this->readShort();
+		if ($isCollectionElement)
+				$this->readShort();
 		$length = $this->readInt();
 		return $this->read($length);
 	}
@@ -174,9 +174,9 @@ class DataStream {
 	 * @return float
 	 */
 	public function readFloat($isCollectionElement = false) {
-    if ($isCollectionElement) {
-        $length = $this->readShort();
-    }
+		if ($isCollectionElement) {
+				$length = $this->readShort();
+		}
 		return unpack('f', strrev($this->read(4)))[1];
 	}
 
@@ -186,9 +186,9 @@ class DataStream {
 	 * @return double
 	 */
 	public function readDouble($isCollectionElement = false) {
-    if ($isCollectionElement) {
-        $length = $this->readShort();
-    }
+		if ($isCollectionElement) {
+				$length = $this->readShort();
+		}
 		return unpack('d', strrev($this->read(8)))[1];
 	}
 
@@ -216,25 +216,25 @@ class DataStream {
 	 * @return string
 	 */
 	public function readVarint($isCollectionElement = false) {
-    if($isCollectionElement) {
-        $length = $this->readShort();
-    } else {
-        $length = 8;
-    }
-    switch($length) {
-        case 8:
-            $unpack = 'N2';
-            break;
-        case 4:
-            $unpack = 'N';
-            break;
-        case 2:
-            $unpack = 'n';
-            break;
-        case 1:
-            $unpack = 'c';
-            break;
-    }
+		if($isCollectionElement) {
+				$length = $this->readShort();
+		} else {
+				$length = 8;
+		}
+		switch($length) {
+				case 8:
+						$unpack = 'N2';
+						break;
+				case 4:
+						$unpack = 'N';
+						break;
+				case 2:
+						$unpack = 'n';
+						break;
+				case 1:
+						$unpack = 'c';
+						break;
+		}
 
 		list($higher, $lower) = array_values(unpack($unpack, $this->read($length)));
 		return $higher << 32 | $lower;
@@ -246,9 +246,9 @@ class DataStream {
 	 * @return string
 	 */
 	public function readDecimal($isCollectionElement = false) {
-    if ($isCollectionElement) {
-        $length = $this->readShort();
-    }
+		if ($isCollectionElement) {
+				$length = $this->readShort();
+		}
 		$scale = $this->readInt();
 		$value = $this->readVarint($isCollectionElement);
 		$len = strlen($value);
