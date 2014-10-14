@@ -1,8 +1,6 @@
 <?php
 namespace evseevnn\Cassandra\Protocol;
 use evseevnn\Cassandra\Enum\DataTypeEnum;
-use evseevnn\Cassandra\Exception\CassandraException;
-use evseevnn\Cassandra\Exception\QueryException;
 
 class BinaryData {
 
@@ -142,7 +140,7 @@ class BinaryData {
 	 */
 	private function getBigInt() {
 		if (!$value = intval($this->value))
-				trigger_error('BigInt value ' . $this->value . ' not an int', E_USER_ERROR);
+				trigger_error('BigInt value ' . $value . ' not an int', E_USER_ERROR);
 		$highMap = 0xffffffff00000000;
 		$lowMap = 0x00000000ffffffff;
 		$higher = ($value & $highMap) >>32;

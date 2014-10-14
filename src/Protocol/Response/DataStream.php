@@ -109,7 +109,9 @@ class DataStream {
 	 *
 	 * @return string
 	 */
-	public function readUuid() {
+	public function readUuid($isCollectionElement) {
+		if ($isCollectionElement)
+			$this->readShort();
 		$uuid = '';
 		$data = $this->read(16);
 
@@ -286,9 +288,9 @@ class DataStream {
 			case DataTypeEnum::TIMESTAMP:
 				return $this->readTimestamp();
 			case DataTypeEnum::UUID:
-				return $this->readUuid();
+				return $this->readUuid($isCollectionElement);
 			case DataTypeEnum::TIMEUUID:
-				return $this->readUuid();
+				return $this->readUuid($isCollectionElement);
 			case DataTypeEnum::INET:
 				return $this->readInet();
 			case DataTypeEnum::COLLECTION_LIST:

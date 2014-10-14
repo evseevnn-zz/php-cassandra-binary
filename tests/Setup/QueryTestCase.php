@@ -32,4 +32,9 @@ abstract class QueryTestCase extends \PHPUnit_Framework_TestCase
 				self::$connection->query("DROP KEYSPACE testkeyspace;");
 		}
 
+	    public static function assertFloatEquals($expected, $actual)
+	    {
+		        self::assertEquals($expected, $actual, '', 0.00001);
+	    }
+
 }

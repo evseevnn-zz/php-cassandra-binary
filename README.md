@@ -17,6 +17,10 @@ Cassandra client library for PHP, using the native binary protocol.
 * the ability to specify the settings (setup default consistency level and more)
 * more fixes
 
+## Known issues
+* decimal and timestamps have bugs especially in collections (map,set,list)
+* connection handling e.g. timeouts
+
 ## Installation
 
 PHP 5.4+ is required. There is no need for additional libraries.
