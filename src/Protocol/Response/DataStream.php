@@ -109,7 +109,7 @@ class DataStream {
 	 *
 	 * @return string
 	 */
-	public function readUuid($isCollectionElement) {
+	public function readUuid($isCollectionElement = false) {
 		if ($isCollectionElement)
 			$this->readShort();
 		$uuid = '';
@@ -208,8 +208,13 @@ class DataStream {
 	 *
 	 * @return string
 	 */
-	public function readInet() {
-		return inet_ntop($this->data);
+	public function readInet($isCollectionElement = false) {
+		if ($isCollectionElement) {
+			$data = $this->read($this->readShort());
+		} else {
+			$data = $this->data;
+		}
+		return inet_ntop($data);
 	}
 
 	/**
@@ -292,7 +297,7 @@ class DataStream {
 			case DataTypeEnum::TIMEUUID:
 				return $this->readUuid($isCollectionElement);
 			case DataTypeEnum::INET:
-				return $this->readInet();
+				return $this->readInet($isCollectionElement);
 			case DataTypeEnum::COLLECTION_LIST:
 			case DataTypeEnum::COLLECTION_SET:
 				return $this->readList($type['value']);
