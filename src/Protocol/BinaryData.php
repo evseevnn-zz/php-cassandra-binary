@@ -139,7 +139,8 @@ class BinaryData {
 	 * @return string
 	 */
 	private function getBigInt() {
-		$value = $this->value;
+		if (!$value = intval($this->value))
+				trigger_error('BigInt value ' . $value . ' not an int', E_USER_ERROR);
 		$highMap = 0xffffffff00000000;
 		$lowMap = 0x00000000ffffffff;
 		$higher = ($value & $highMap) >>32;
