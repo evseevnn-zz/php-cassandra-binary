@@ -3,6 +3,10 @@ namespace evseevnn\Cassandra\Protocol\Response;
 
 use evseevnn\Cassandra\Enum\DataTypeEnum;
 
+/**
+ * Class DataStream
+ * @package evseevnn\Cassandra\Protocol\Response
+ */
 class DataStream {
 
 	/**
@@ -62,6 +66,7 @@ class DataStream {
 	/**
 	 * Read unsigned int.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return int
 	 */
 	public function readInt($isCollectionElement = false) {
@@ -95,6 +100,7 @@ class DataStream {
 	/**
 	 * Read bytes.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return string
 	 */
 	public function readBytes($isCollectionElement = false) {
@@ -107,6 +113,7 @@ class DataStream {
 	/**
 	 * Read uuid.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return string
 	 */
 	public function readUuid($isCollectionElement = false) {
@@ -173,11 +180,12 @@ class DataStream {
 	/**
 	 * Read float.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return float
 	 */
 	public function readFloat($isCollectionElement = false) {
 		if ($isCollectionElement) {
-				$length = $this->readShort();
+				$this->readShort();
 		}
 		return unpack('f', strrev($this->read(4)))[1];
 	}
@@ -185,11 +193,12 @@ class DataStream {
 	/**
 	 * Read double.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return double
 	 */
 	public function readDouble($isCollectionElement = false) {
 		if ($isCollectionElement) {
-				$length = $this->readShort();
+				$this->readShort();
 		}
 		return unpack('d', strrev($this->read(8)))[1];
 	}
@@ -206,6 +215,7 @@ class DataStream {
 	/**
 	 * Read inet.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return string
 	 */
 	public function readInet($isCollectionElement = false) {
@@ -220,6 +230,7 @@ class DataStream {
 	/**
 	 * Read variable length integer.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return string
 	 */
 	public function readVarint($isCollectionElement = false) {
@@ -242,19 +253,21 @@ class DataStream {
 						$unpack = 'c';
 						break;
 		}
-
-		list($higher, $lower) = array_values(unpack($unpack, $this->read($length)));
+		$read = unpack($unpack, $this->read($length));
+		$higher = $read[1];
+		$lower = $read[2];
 		return $higher << 32 | $lower;
 	}
 
 	/**
 	 * Read variable length decimal.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return string
 	 */
 	public function readDecimal($isCollectionElement = false) {
 		if ($isCollectionElement) {
-				$length = $this->readShort();
+				$this->readShort();
 		}
 		$scale = $this->readInt();
 		$value = $this->readVarint($isCollectionElement);
