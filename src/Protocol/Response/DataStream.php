@@ -82,8 +82,13 @@ class DataStream {
   	 *
   	 * @return int;
   	 */
- 	function readBigInt() {
-   		$data = $this->data;
+ 	function readBigInt($isCollectionElement = false) {
+        if ($isCollectionElement)
+            $length = $this->readShort();
+        else
+            $length = 8;
+
+   		$data = $this->read($length);
    		$arr = unpack('N2', $data);
 
 		if (PHP_INT_SIZE == 4) {
@@ -349,7 +354,7 @@ class DataStream {
 			case DataTypeEnum::TEXT:
 				return $isCollectionElement ? $this->readString() : $this->data;
 			case DataTypeEnum::BIGINT:
-        		return $this->readBigInt();
+        		return $this->readBigInt($isCollectionElement);
 			case DataTypeEnum::COUNTER:
 			case DataTypeEnum::VARINT:
 				return $this->readVarint($isCollectionElement);

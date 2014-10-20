@@ -4,7 +4,7 @@ namespace evseevnn\Cassandra\Tests;
 
 use evseevnn\Cassandra;
 
-class QueryBigIntTest extends Setup\QueryTestCase
+class QueryPositiveBigIntTest extends Setup\QueryTestCase
 {
 
 		public function testBigIntRow()
