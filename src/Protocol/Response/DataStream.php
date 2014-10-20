@@ -230,6 +230,11 @@ class DataStream {
 	 * @return mixed
 	 */
 	public function readByType(array $type, $isCollectionElement = false) {
+
+		if ( $this->data === null ) {
+			return null;
+		}
+
 		switch ($type['type']) {
 			case DataTypeEnum::ASCII:
 			case DataTypeEnum::VARCHAR:
