@@ -3,6 +3,10 @@ namespace evseevnn\Cassandra\Protocol\Response;
 
 use evseevnn\Cassandra\Enum\DataTypeEnum;
 
+/**
+ * Class DataStream
+ * @package evseevnn\Cassandra\Protocol\Response
+ */
 class DataStream {
 
 	/**
@@ -62,15 +66,83 @@ class DataStream {
 	/**
 	 * Read unsigned int.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return int
 	 */
-    public function readInt($isCollectionElement = false) {
-        if ($isCollectionElement) {
+	public function readInt($isCollectionElement = false) {
+		if ($isCollectionElement) {
+			$length = $this->readShort();
+			return unpack('N', $this->read($length))[1];
+		}
+		return unpack('N', $this->read(4))[1];
+	}
+
+	/**
+  	 * Read unsigned big int;
+  	 *
+  	 * @return int;
+  	 */
+ 	function readBigInt($isCollectionElement = false) {
+        if ($isCollectionElement)
             $length = $this->readShort();
-            return unpack('N', $this->read($length))[1];
-        }
-        return unpack('N', $this->read(4))[1];
-    }
+        else
+            $length = 8;
+
+   		$data = $this->read($length);
+   		$arr = unpack('N2', $data);
+
+		if (PHP_INT_SIZE == 4) {
+    		$hi = $arr[1];
+	    	$lo = $arr[2];
+    		$isNeg = $hi  < 0;
+
+	    	// Check for a negative
+     		if ($isNeg) {
+       			$hi = ~$hi & (int)0xffffffff;
+       			$lo = ~$lo & (int)0xffffffff;
+
+	       		if ($lo == (int)0xffffffff) {	
+    	     		$hi++;
+        	 		$lo = 0;
+       			} else {
+         			$lo++;
+       			}
+     		}
+
+     		// Force 32bit words in excess of 2G to pe positive - we deal wigh sign
+     		// explicitly below
+     		if ($hi & (int)0x80000000) {
+       			$hi &= (int)0x7fffffff;
+       			$hi += 0x80000000;
+     		}
+
+    		if ($lo & (int)0x80000000) {
+      			$lo &= (int)0x7fffffff;
+      			$lo += 0x80000000;
+    		}
+
+     		$value = $hi * 4294967296 + $lo;
+
+     		if ($isNeg) {
+       			$value = 0 - $value;
+     		}
+   		} else {
+     		if ($arr[2] & 0x80000000) {
+       			$arr[2] = $arr[2] & 0xffffffff;
+     		}
+
+     		if ($arr[1] & 0x80000000) {
+       			$arr[1] = $arr[1] & 0xffffffff;
+       			$arr[1] = $arr[1] ^ 0xffffffff;
+       			$arr[2] = $arr[2] ^ 0xffffffff;
+       			$value = 0 - $arr[1]*4294967296 - $arr[2] - 1;
+     		} else {
+       			$value = $arr[1]*4294967296 + $arr[2];
+     		}
+   		}
+
+		return $value;
+ 	}
 
 	/**
 	 * Read string.
@@ -95,9 +167,12 @@ class DataStream {
 	/**
 	 * Read bytes.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return string
 	 */
-	public function readBytes() {
+	public function readBytes($isCollectionElement = false) {
+		if ($isCollectionElement)
+				$this->readShort();
 		$length = $this->readInt();
 		return $this->read($length);
 	}
@@ -105,9 +180,12 @@ class DataStream {
 	/**
 	 * Read uuid.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return string
 	 */
-	public function readUuid() {
+	public function readUuid($isCollectionElement = false) {
+		if ($isCollectionElement)
+			$this->readShort();
 		$uuid = '';
 		$data = $this->read(16);
 
@@ -169,18 +247,26 @@ class DataStream {
 	/**
 	 * Read float.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return float
 	 */
-	public function readFloat() {
+	public function readFloat($isCollectionElement = false) {
+		if ($isCollectionElement) {
+				$this->readShort();
+		}
 		return unpack('f', strrev($this->read(4)))[1];
 	}
 
 	/**
 	 * Read double.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return double
 	 */
-	public function readDouble() {
+	public function readDouble($isCollectionElement = false) {
+		if ($isCollectionElement) {
+				$this->readShort();
+		}
 		return unpack('d', strrev($this->read(8)))[1];
 	}
 
@@ -196,30 +282,62 @@ class DataStream {
 	/**
 	 * Read inet.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return string
 	 */
-	public function readInet() {
-		return inet_ntop($this->data);
+	public function readInet($isCollectionElement = false) {
+		if ($isCollectionElement) {
+			$data = $this->read($this->readShort());
+		} else {
+			$data = $this->data;
+		}
+		return inet_ntop($data);
 	}
 
 	/**
 	 * Read variable length integer.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return string
 	 */
-	public function readVarint() {
-		list($higher, $lower) = array_values(unpack('N2', $this->data));
+	public function readVarint($isCollectionElement = false) {
+		if($isCollectionElement) {
+				$length = $this->readShort();
+		} else {
+				$length = 8;
+		}
+		switch($length) {
+				case 8:
+						$unpack = 'N2';
+						break;
+				case 4:
+						$unpack = 'N';
+						break;
+				case 2:
+						$unpack = 'n';
+						break;
+				case 1:
+						$unpack = 'c';
+						break;
+		}
+		$read = unpack($unpack, $this->read($length));
+		$higher = $read[1];
+		$lower = $read[2];
 		return $higher << 32 | $lower;
 	}
 
 	/**
 	 * Read variable length decimal.
 	 *
+	 * @param bool $isCollectionElement
 	 * @return string
 	 */
-	public function readDecimal() {
+	public function readDecimal($isCollectionElement = false) {
+		if ($isCollectionElement) {
+				$this->readShort();
+		}
 		$scale = $this->readInt();
-		$value = $this->readVarint();
+		$value = $this->readVarint($isCollectionElement);
 		$len = strlen($value);
 		return substr($value, 0, $len - $scale) . '.' . substr($value, $len - $scale);
 	}
@@ -236,30 +354,31 @@ class DataStream {
 			case DataTypeEnum::TEXT:
 				return $isCollectionElement ? $this->readString() : $this->data;
 			case DataTypeEnum::BIGINT:
+        		return $this->readBigInt($isCollectionElement);
 			case DataTypeEnum::COUNTER:
 			case DataTypeEnum::VARINT:
-				return $this->readVarint();
+				return $this->readVarint($isCollectionElement);
 			case DataTypeEnum::CUSTOM:
 			case DataTypeEnum::BLOB:
-				return $this->readBytes();
+				return $this->readBytes($isCollectionElement);
 			case DataTypeEnum::BOOLEAN:
 				return $this->readBoolean();
 			case DataTypeEnum::DECIMAL:
-				return $this->readDecimal();
+				return $this->readDecimal($isCollectionElement);
 			case DataTypeEnum::DOUBLE:
-				return $this->readDouble();
+				return $this->readDouble($isCollectionElement);
 			case DataTypeEnum::FLOAT:
-				return $this->readFloat();
+				return $this->readFloat($isCollectionElement);
 			case DataTypeEnum::INT:
 				return $this->readInt($isCollectionElement);
 			case DataTypeEnum::TIMESTAMP:
 				return $this->readTimestamp();
 			case DataTypeEnum::UUID:
-				return $this->readUuid();
+				return $this->readUuid($isCollectionElement);
 			case DataTypeEnum::TIMEUUID:
-				return $this->readUuid();
+				return $this->readUuid($isCollectionElement);
 			case DataTypeEnum::INET:
-				return $this->readInet();
+				return $this->readInet($isCollectionElement);
 			case DataTypeEnum::COLLECTION_LIST:
 			case DataTypeEnum::COLLECTION_SET:
 				return $this->readList($type['value']);
