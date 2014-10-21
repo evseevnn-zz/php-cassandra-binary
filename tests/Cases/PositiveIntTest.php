@@ -4,7 +4,7 @@ namespace evseevnn\Cassandra\Tests;
 
 use evseevnn\Cassandra;
 
-class QueryIntTest extends Setup\QueryTestCase
+class QueryPositiveIntTest extends Setup\QueryTestCase
 {
 
 		public function testIntRow()

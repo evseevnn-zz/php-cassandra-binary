@@ -71,9 +71,9 @@ class DataStream {
 	 */
 	public function readInt($isCollectionElement = false) {
 		if ($isCollectionElement) {
-			$length = $this->readShort();
-			return unpack('N', $this->read($length))[1];
-		}
+            $length = $this->readShort();
+            return unpack('l', strrev($this->read($length)))[1];
+        }
 		return unpack('l', strrev($this->read(4)))[1];
 	}
 
