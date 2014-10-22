@@ -210,7 +210,7 @@ class DataStream {
 	 * @return int
 	 */
 	public function readTimestamp() {
-		return round($this->readInt() * 4294967.296 + ($this->readInt() / 1000));
+        return ($this->data === '' || $this->data === false ) ? null : round($this->readInt() * 4294967.296 + ($this->readInt() / 1000));
 	}
 
 	/**

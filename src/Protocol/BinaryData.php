@@ -153,7 +153,8 @@ class BinaryData {
 	 */
 	private function getTimestamp() {
 		// for use timestamp = 10 digits. happy for time()!
-		if (strlen($this->value) === 10) $this->value *= 1000;
+        if($this->value===null)return '';
+        if (strlen($this->value) === 10) $this->value *= 1000;
 		return $this->getBigInt();
 	}
 
