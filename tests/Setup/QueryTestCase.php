@@ -18,7 +18,10 @@ abstract class QueryTestCase extends \PHPUnit_Framework_TestCase
 
 		public static function setUpBeforeClass()
 		{
-				self::$connection = new Cassandra\Database(['127.0.0.1:9042']);
+				self::$connection = new Cassandra\Database(
+                    ['127.0.0.1:9042'],
+                    null,
+                    ['connect_timeout_ms' => 500]);
 				self::$connection->connect();
 				self::$connection->query("DROP KEYSPACE IF EXISTS testkeyspace;");
 				self::$connection->query(
