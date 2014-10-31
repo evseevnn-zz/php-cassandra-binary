@@ -22,12 +22,15 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
 
 	public function testNonOpenPortConnection()
 	{
-		$connection = new Cassandra\Database(['127.0.0.1:9201']);
-		$this->setExpectedException(
-			'evseevnn\Cassandra\Exception\ClusterException',
-			'Node list is empty, possibly because nodes are unreachable.'
-		);
-		$connection->connect();
+		$start = time();
+		try {
+			$connection = new Cassandra\Database(['127.0.0.1:9201']);
+			$connection->connect();
+		} catch (Cassandra\Exception\ClusterException $e) {
+			$this->assertEquals($e->getMessage(), 'Node list is empty, possibly because nodes are unreachable.');
+		}
+		$timespan = (time()-$start);
+		$this->assertLessThanOrEqual(1,$timespan);
 	}
 
 	public function testWrongIPConnection()

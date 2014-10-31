@@ -61,7 +61,7 @@ class Node {
 		socket_set_option($this->socket, SOL_SOCKET, SO_SNDTIMEO, ["sec" => self::STREAM_TIMEOUT, "usec" => 0]);
 
 		if (!($this->socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP))) {
-			throw new ConnectionException("Error Creating Socket: ".socket_strerror(socket_last_error()));
+			throw new ConnectionException("Error Creating Connection to Cassandra: ".socket_strerror(socket_last_error()));
 		}
 
 		socket_set_nonblock($this->socket);
@@ -80,19 +80,19 @@ class Node {
 
 			if ($error != SOCKET_EINPROGRESS && $error != SOCKET_EALREADY) {
 				socket_close($this->socket);
-				throw new ConnectionException("Error Connecting Cassandra Socket: ".socket_strerror($error));
+				throw new ConnectionException("Error Connecting to '{$this->host}:{$this->port}': ".socket_strerror($error));
 			}
 
 			if ($error == 37) {
 				socket_close($this->socket);
-				throw new ConnectionException("Error Connecting Cassandra Socket: ".socket_strerror($error));
+				throw new ConnectionException("Error Connecting to '{$this->host}:{$this->port}': ".socket_strerror($error));
 			}
 			usleep(1000);
 		}
 
 		if (!$connected) {
 			socket_close($this->socket);
-			throw new ConnectionException("Error Connecting Cassandra Socket: Connect Timed Out After {$connect_timeout_ms} seconds.");
+			throw new ConnectionException("Error Connecting to '{$this->host}:{$this->port}': Connect Timed Out After {$connect_timeout_ms} seconds.");
 		}
 
 		socket_set_block($this->socket);
