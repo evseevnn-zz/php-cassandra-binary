@@ -24,7 +24,7 @@ class Connection {
 	 */
 	private $connection;
 
-    /**
+	/**
 	 * @param Cluster $cluster
 	 */
 	public function __construct(Cluster $cluster) {
@@ -36,7 +36,7 @@ class Connection {
 			$this->node = $this->cluster->getRandomNode();
 			$this->connection = $this->node->getConnection($connect_timeout_ms);
 		} catch (ConnectionException $e) {
-            error_log($e->getMessage());
+			error_log($e->getMessage());
 			$this->connect($connect_timeout_ms);
 		}
 	}
