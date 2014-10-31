@@ -51,48 +51,53 @@ class Node {
 	 * @return resource
 	 * @throws \Exception
 	 */
-	public function getConnection($connect_timeout_ms = 10) {
+	public function getConnection($connect_timeout_ms = 10000) {
 		if (!empty($this->socket)) return $this->socket;
 
 		$this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)
-            or new ConnectionException('Unable to create socket');
+			or new ConnectionException('Unable to create socket');
 		socket_set_option($this->socket, getprotobyname('TCP'), TCP_NODELAY, 1);
 		socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, ["sec" => self::STREAM_TIMEOUT, "usec" => 0]);
-        socket_set_option($this->socket, SOL_SOCKET, SO_SNDTIMEO, ["sec" => self::STREAM_TIMEOUT, "usec" => 0]);
+		socket_set_option($this->socket, SOL_SOCKET, SO_SNDTIMEO, ["sec" => self::STREAM_TIMEOUT, "usec" => 0]);
 
-        if (!($this->socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP))) {
-            throw new ConnectionException("Error Creating Socket: ".socket_strerror(socket_last_error()));
-        }
+		if (!($this->socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP))) {
+			throw new ConnectionException("Error Creating Socket: ".socket_strerror(socket_last_error()));
+		}
 
-        socket_set_nonblock($this->socket);
+		socket_set_nonblock($this->socket);
 
-        $error = NULL;
-        $attempts = 0;
+		$error = NULL;
+		$attempts = 0;
 
-        $connected = null;
-        while (!($connected = @socket_connect($this->socket, $this->host, $this->port)) && $attempts++ < $connect_timeout_ms) {
-            $error = socket_last_error();
+		$connected = null;
+		while (!($connected = @socket_connect($this->socket, $this->host, $this->port)) && $attempts++ < $connect_timeout_ms) {
+			$error = socket_last_error();
 
-            if ($error == SOCKET_EISCONN) {
-                $connected = true;
-                break;
-            }
+			if ($error == SOCKET_EISCONN) {
+				$connected = true;
+				break;
+			}
 
-            if ($error != SOCKET_EINPROGRESS && $error != SOCKET_EALREADY) {
-                socket_close($this->socket);
-                throw new ConnectionException("Error Connecting Socket: ".socket_strerror($error));
-            }
-            usleep(100);
-        }
+			if ($error != SOCKET_EINPROGRESS && $error != SOCKET_EALREADY) {
+				socket_close($this->socket);
+				throw new ConnectionException("Error Connecting Cassandra Socket: ".socket_strerror($error));
+			}
 
-        if (!$connected) {
-            socket_close($this->socket);
-            throw new ConnectionException("Error Connecting Socket: Connect Timed Out After {$connect_timeout_ms} seconds.");
-        }
+			if ($error == 37) {
+				socket_close($this->socket);
+				throw new ConnectionException("Error Connecting Cassandra Socket: ".socket_strerror($error));
+			}
+			usleep(1000);
+		}
 
-        socket_set_block($this->socket);
+		if (!$connected) {
+			socket_close($this->socket);
+			throw new ConnectionException("Error Connecting Cassandra Socket: Connect Timed Out After {$connect_timeout_ms} seconds.");
+		}
 
-        return $this->socket;
+		socket_set_block($this->socket);
+
+		return $this->socket;
 	}
 
 	/**

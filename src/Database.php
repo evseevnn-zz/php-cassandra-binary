@@ -28,7 +28,7 @@ class Database {
 	 */
 	private $options = [
 		'CQL_VERSION' => '3.0.0',
-        'connect_timeout_ms' => 10
+        'connect_timeout_ms' => 10000
 	];
 
 	/**
