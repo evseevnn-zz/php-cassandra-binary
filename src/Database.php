@@ -27,8 +27,7 @@ class Database {
 	 * @var array
 	 */
 	private $options = [
-		'CQL_VERSION' => '3.0.0',
-		'connect_timeout_ms' => 10000
+		'CQL_VERSION' => '3.0.0'
 	];
 
 	/**
@@ -66,7 +65,7 @@ class Database {
 	 */
 	public function connect() {
 		if ($this->connection->isConnected()) return true;
-		$this->connection->connect($this->options['connect_timeout_ms']);
+		$this->connection->connect();
 		$response = $this->connection->sendRequest(
 			RequestFactory::startup($this->options)
 		);
