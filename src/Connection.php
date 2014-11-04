@@ -31,12 +31,13 @@ class Connection {
 		$this->cluster = $cluster;
 	}
 
-	public function connect() {
+	public function connect($connect_timeout_ms) {
 		try {
 			$this->node = $this->cluster->getRandomNode();
-			$this->connection = $this->node->getConnection();
+			$this->connection = $this->node->getConnection($connect_timeout_ms);
 		} catch (ConnectionException $e) {
-			$this->connect();
+			error_log($e->getMessage());
+			$this->connect($connect_timeout_ms);
 		}
 	}
 
