@@ -49,8 +49,10 @@ class BinaryData {
 
 			case DataTypeEnum::COUNTER:
 			case DataTypeEnum::BIGINT:
-			case DataTypeEnum::VARINT:
 				return $this->getBigInt();
+
+			case DataTypeEnum::VARINT:
+				return $this->getVarInt();
 
 			case DataTypeEnum::BOOLEAN:
 				return $this->getBoolean();
@@ -151,6 +153,20 @@ class BinaryData {
 	/**
 	 * @return string
 	 */
+	private function getVarInt() {
+		if (!(float)$this->value && !(int)$this->value)
+				trigger_error('VarInt value ' . $this->value . ' not an int or float', E_USER_ERROR);
+
+		$hex = $this->bcdechex($this->value);
+		if (strlen($hex) % 2 != 0)
+			$hex = '0'.$hex;
+
+		return pack('H*', $hex);
+	}
+
+	/**
+	 * @return string
+	 */
 	private function getTimestamp() {
 		// for use timestamp = 10 digits. happy for time()!
 		if (strlen($this->value) === 10) $this->value *= 1000;
@@ -214,4 +230,22 @@ class BinaryData {
 	private function getInt() {
 		return pack('N', $this->value);
 	}
+
+	/**
+	 *
+	 * @param string $dec
+	 * @return string
+	 */
+	private function bcdechex($dec) {
+		$last = bcmod($dec, 16);
+		$remain = bcdiv(bcsub($dec, $last), 16);
+
+		if ($remain == 0) {
+			return dechex($last);
+		}
+		else {
+			return $this->bcdechex($remain) . dechex($last);
+		}
+	}
+
 }
