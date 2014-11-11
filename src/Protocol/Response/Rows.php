@@ -38,7 +38,7 @@ class Rows implements \Iterator, \Countable {
 				try {
 					$row[$this->columns[$j]['name']] = $stream->readBytes();
 				} catch (\Exception $e) {
-					$row[$this->columns[$j]['name']] = null;
+					$row[$this->columns[$j]['name']] = $stream->getTypeEmptyValue($this->columns[$j]['type']);
 				}
 			}
 			$this->rows[] = $row;
@@ -63,7 +63,7 @@ class Rows implements \Iterator, \Countable {
 				$row[$this->columns[$i]['name']] = $data->readByType($this->columns[$i]['type']);
 			} catch (\Exception $e) {
 				trigger_error($e->getMessage());
-				$row[$this->columns[$i]['name']] = null;
+				$row[$this->columns[$i]['name']] = $data->getTypeEmptyValue($this->columns[$i]['type']);
 			}
 		}
 		return $row;

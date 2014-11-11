@@ -67,9 +67,15 @@ class DataStream {
     public function readInt($isCollectionElement = false) {
         if ($isCollectionElement) {
             $length = $this->readShort();
-            return unpack('N', $this->read($length))[1];
+            $toReturn = unpack('l', strrev($this->read($length)))[1];
+			if($toReturn == -1)
+				$toReturn = 0;
+			return $toReturn;
         }
-        return unpack('N', $this->read(4))[1];
+        $toReturn = unpack('l', strrev($this->read(4)))[1];
+		if($toReturn == -1)
+				$toReturn = 0;
+		return $toReturn;
     }
 
 	/**
@@ -332,5 +338,48 @@ class DataStream {
 
 		trigger_error('Unknown type ' . var_export($type, true));
 		return null;
+	}
+
+	public function getTypeEmptyValue(array $type) {
+	  	switch ($type['type']) {
+	    	case DataTypeEnum::ASCII:
+	    	case DataTypeEnum::VARCHAR:
+	    	case DataTypeEnum::TEXT:
+	      		return null;
+		    case DataTypeEnum::BIGINT:
+		      return 0;
+		    case DataTypeEnum::COUNTER:
+		    case DataTypeEnum::VARINT:
+		      return 0;
+		    case DataTypeEnum::CUSTOM:
+		    case DataTypeEnum::BLOB:
+		      return null;
+		    case DataTypeEnum::BOOLEAN:
+		      return false;
+		    case DataTypeEnum::DECIMAL:
+		      return 0;
+		    case DataTypeEnum::DOUBLE:
+		      return 0;
+		    case DataTypeEnum::FLOAT:
+		      return 0;
+		    case DataTypeEnum::INT:
+		      return 0;
+		    case DataTypeEnum::TIMESTAMP:
+		      return 0;
+		    case DataTypeEnum::UUID:
+		      return null;
+		    case DataTypeEnum::TIMEUUID:
+		      return null;
+		    case DataTypeEnum::INET:
+		      return null;
+		    case DataTypeEnum::COLLECTION_LIST:
+		    case DataTypeEnum::COLLECTION_SET:
+		      return null;
+		    case DataTypeEnum::COLLECTION_MAP:
+		      return null;
+		  }
+
+	  trigger_error('Unknown type ' . var_export($type, true));
+	  return null;
 	}
 }
