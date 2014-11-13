@@ -240,12 +240,10 @@ class BinaryData {
 		$last = bcmod($dec, 16);
 		$remain = bcdiv(bcsub($dec, $last), 16);
 
-		if ($remain == 0) {
+		if ($remain == 0)
 			return dechex($last);
-		}
-		else {
-			return $this->bcdechex($remain) . dechex($last);
-		}
+
+		return $this->bcdechex($remain) . dechex($last);
 	}
 
 }
