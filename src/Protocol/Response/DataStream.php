@@ -303,40 +303,12 @@ class DataStream {
 	public function readVarint($isCollectionElement = false) {
 		if($isCollectionElement) {
 				$length = $this->readShort();
-		}
-		else {
+		} else {
 				$length = strlen($this->data);
 		}
 
-		switch($length) {
-				case 8:
-						$unpack = 'N2';
-						break;
-				case 4:
-						$unpack = 'N';
-						break;
-				case 2:
-						$unpack = 'n';
-						break;
-				case 1:
-						$unpack = 'c';
-						break;
-				default:
-						$unpack = 'H*';
-						break;
-		}
-
-		$read = unpack($unpack, $this->read($length));
-		if ($length > 8)
-		{
-			$ret = $this->bchexdec($read[1]);
-		} else {
-			$higher = $read[1];
-			$lower = $read[2];
-			$ret = $higher << 32 | $lower;
-		}
-
-		return $ret;
+		$hex = unpack('H*', $this->read($length));
+		return $this->bchexdec($hex[1]);
 	}
 
 	/**
