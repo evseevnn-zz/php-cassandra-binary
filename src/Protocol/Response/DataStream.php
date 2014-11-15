@@ -304,26 +304,11 @@ class DataStream {
 		if($isCollectionElement) {
 				$length = $this->readShort();
 		} else {
-				$length = 8;
+				$length = strlen($this->data);
 		}
-		switch($length) {
-				case 8:
-						$unpack = 'N2';
-						break;
-				case 4:
-						$unpack = 'N';
-						break;
-				case 2:
-						$unpack = 'n';
-						break;
-				case 1:
-						$unpack = 'c';
-						break;
-		}
-		$read = unpack($unpack, $this->read($length));
-		$higher = $read[1];
-		$lower = $read[2];
-		return $higher << 32 | $lower;
+
+		$hex = unpack('H*', $this->read($length));
+		return $this->bchexdec($hex[1]);
 	}
 
 	/**
@@ -394,4 +379,19 @@ class DataStream {
 		trigger_error('Unknown type ' . var_export($type, true));
 		return null;
 	}
+
+	/**
+	 *
+	 * @param string $hex
+	 * @return string
+	 */
+	private function bchexdec($hex) {
+		if (strlen($hex) == 1)
+			return hexdec($hex);
+
+		$remain = substr($hex, 0, -1);
+		$last = substr($hex, -1);
+		return bcadd(bcmul(16, $this->bchexdec($remain)), hexdec($last));
+	}
+
 }
