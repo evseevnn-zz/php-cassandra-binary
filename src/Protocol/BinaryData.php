@@ -231,11 +231,11 @@ class BinaryData {
 		return pack('N', $this->value);
 	}
 
-	/**
-	 *
-	 * @param string $dec
-	 * @return string
-	 */
+    /**
+     *
+     * @param string $dec
+     * @return string
+     */
     private function bcdechex($dec) {
         $last = bcmod($dec, 16);
         $remain = bcdiv(bcsub($dec, $last), 16);
@@ -244,6 +244,6 @@ class BinaryData {
             return dechex($last);
 
         return $this->bcdechex($remain) . dechex($last);
-	}
+    }
 
 }
