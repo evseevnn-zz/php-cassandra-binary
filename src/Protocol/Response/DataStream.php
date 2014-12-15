@@ -344,8 +344,8 @@ class DataStream {
 			case DataTypeEnum::TEXT:
 				return $isCollectionElement ? $this->readString() : $this->data;
 			case DataTypeEnum::BIGINT:
-        		return $this->readBigInt($isCollectionElement);
 			case DataTypeEnum::COUNTER:
+        		return $this->readBigInt($isCollectionElement);
 			case DataTypeEnum::VARINT:
 				return $this->readVarint($isCollectionElement);
 			case DataTypeEnum::CUSTOM:
