@@ -210,7 +210,7 @@ class DataStream {
 	 * @return int
 	 */
 	public function readTimestamp() {
-		return round($this->readInt() * 4294967.296 + ($this->readInt() / 1000));
+		return $this->readBigInt() / 1000;
 	}
 
 	/**
@@ -344,8 +344,8 @@ class DataStream {
 			case DataTypeEnum::TEXT:
 				return $isCollectionElement ? $this->readString() : $this->data;
 			case DataTypeEnum::BIGINT:
-        		return $this->readBigInt($isCollectionElement);
 			case DataTypeEnum::COUNTER:
+        		return $this->readBigInt($isCollectionElement);
 			case DataTypeEnum::VARINT:
 				return $this->readVarint($isCollectionElement);
 			case DataTypeEnum::CUSTOM:

@@ -245,5 +245,4 @@ class BinaryData {
 
 		return $this->bcdechex($remain) . dechex($last);
 	}
-
 }
