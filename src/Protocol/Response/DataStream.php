@@ -174,6 +174,12 @@ class DataStream {
 		if ($isCollectionElement)
 				$this->readShort();
 		$length = $this->readInt();
+
+		if ($length === -1)
+		{
+			return null;
+		}
+
 		return $this->read($length);
 	}
 
