@@ -36,6 +36,10 @@ class DataStream {
 	 * @return string
 	 */
 	protected function read($length) {
+		if ( ! $length)	{
+			return null;
+		}
+		
 		if ($this->length < $length) {
 			throw new \Exception('Reading while at end of stream');
 		}
