@@ -28,9 +28,16 @@ class Cluster {
 	 * @return Node
 	 * @throws Exception\ClusterException
 	 */
-	public function getRandomNode() {
+	public function getNode($random = FALSE) {
 		if (empty($this->nodes)) throw new ClusterException('Node list is empty.');
-		$nodeKey = array_rand($this->nodes);
+
+		if ($random) {
+			$nodeKey = array_rand($this->nodes);
+		}
+		else {
+			$nodeKey = array_keys($this->nodes)[0];
+		}
+
 		$node = $this->nodes[$nodeKey];
 		try {
 			if ((array)$node === $node) {

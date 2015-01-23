@@ -15,6 +15,11 @@ class Connection {
 	private $cluster;
 
 	/**
+	 * @var UseRandomNOdes
+	 */
+	private $useRandomNodes;
+
+	/**
 	 * @var Node
 	 */
 	private $node;
@@ -27,13 +32,14 @@ class Connection {
 	/**
 	 * @param Cluster $cluster
 	 */
-	public function __construct(Cluster $cluster) {
+	public function __construct(Cluster $cluster, $useRandomNodes) {
 		$this->cluster = $cluster;
+		$this->useRandomNodes = $useRandomNodes;
 	}
 
 	public function connect() {
 		try {
-			$this->node = $this->cluster->getRandomNode();
+			$this->node = $this->cluster->getNode($this->useRandomNodes);
 			$this->connection = $this->node->getConnection();
 		} catch (ConnectionException $e) {
 			$this->connect();

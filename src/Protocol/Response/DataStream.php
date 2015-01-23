@@ -36,6 +36,10 @@ class DataStream {
 	 * @return string
 	 */
 	protected function read($length) {
+		if ( ! $length)	{
+			return null;
+		}
+		
 		if ($this->length < $length) {
 			throw new \Exception('Reading while at end of stream');
 		}
@@ -174,6 +178,12 @@ class DataStream {
 		if ($isCollectionElement)
 				$this->readShort();
 		$length = $this->readInt();
+
+		if ($length === -1)
+		{
+			return null;
+		}
+
 		return $this->read($length);
 	}
 
