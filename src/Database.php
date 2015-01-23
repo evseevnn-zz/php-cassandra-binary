@@ -50,9 +50,9 @@ class Database {
 	 * @param string $keyspace
 	 * @param array $options
 	 */
-	public function __construct(array $nodes, $keyspace = '', array $options = []) {
+	public function __construct(array $nodes, $keyspace = '', array $options = [], $useRandomNodes = TRUE) {
 		$this->cluster = new Cluster($nodes);
-		$this->connection = new Connection($this->cluster);
+		$this->connection = new Connection($this->cluster, $useRandomNodes);
 		$this->options = array_merge($this->options, $options);
 		$this->keyspace = $keyspace;
 	}

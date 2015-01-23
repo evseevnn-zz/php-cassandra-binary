@@ -21,9 +21,13 @@ Cassandra client library for PHP, using the native binary protocol.
 * decimal and timestamps have bugs especially in collections (map,set,list)
 * connection handling e.g. timeouts
 
+## New feature for this fork
+* on Database class constructor, now you can choose whether you want to connect to your nodes randomically or sequentially
+
 ## Installation
 
 PHP 5.4+ is required. There is no need for additional libraries.
+PHP Sockets extension is required to use Cassandra's binary protocol.
 
 Append dependency into composer.json
 
