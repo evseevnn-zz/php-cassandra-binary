@@ -50,7 +50,9 @@ class Connection {
 	 * @return bool
 	 */
 	public function disconnect() {
-		return socket_shutdown($this->connection);
+		$socketShutdown = socket_shutdown($this->connection);
+		socket_close($this->connection);
+		return $socketShutdown;
 	}
 
 	/**
