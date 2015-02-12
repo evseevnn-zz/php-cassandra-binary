@@ -15,6 +15,16 @@ class Connection {
 	private $cluster;
 
 	/**
+	 * @var int
+	 */
+	private $connMaxAttempts;
+
+	/**
+	 * @var int
+	 */
+	private $connAttempts;
+
+	/**
 	 * @var UseRandomNOdes
 	 */
 	private $useRandomNodes;
@@ -35,12 +45,23 @@ class Connection {
 	public function __construct(Cluster $cluster, $useRandomNodes) {
 		$this->cluster = $cluster;
 		$this->useRandomNodes = $useRandomNodes;
+		$this->connMaxAttempts = 30;
+		$this->connAttempts = 0;
 	}
 
 	public function connect() {
+
 		try {
 			$this->node = $this->cluster->getNode($this->useRandomNodes);
 			$this->connection = $this->node->getConnection();
+		} catch (Exception\ClusterException $e) {
+			if ($this->connAttempts >= $this->connMaxAttempts)
+			{
+				return;
+			}
+
+			$this->connAttempts++;
+			$this->connect();
 		} catch (ConnectionException $e) {
 			$this->connect();
 		}
@@ -78,7 +99,7 @@ class Connection {
 	 * @return string
 	 */
 	private function fetchData($length) {
-		$data = socket_read($this->connection, $length);
+		$data = @socket_read($this->connection, $length);
 		while (strlen($data) < $length) {
 			$data .= socket_read($this->connection, $length);
 		}

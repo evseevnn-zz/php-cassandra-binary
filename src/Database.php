@@ -65,7 +65,14 @@ class Database {
 	 */
 	public function connect() {
 		if ($this->connection->isConnected()) return true;
+
 		$this->connection->connect();
+
+		if (!$this->connection->isConnected())
+		{
+			return false;
+		}
+		
 		$response = $this->connection->sendRequest(
 			RequestFactory::startup($this->options)
 		);
