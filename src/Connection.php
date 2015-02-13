@@ -101,7 +101,7 @@ class Connection {
 	private function fetchData($length) {
 		$data = @socket_read($this->connection, $length);
 		while (strlen($data) < $length) {
-			$data .= socket_read($this->connection, $length);
+			$data .= @socket_read($this->connection, $length);
 		}
 		if (socket_last_error($this->connection) == 110) {
 			throw new ConnectionException('Connection timed out');
