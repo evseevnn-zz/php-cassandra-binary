@@ -45,7 +45,7 @@ class Connection {
 	public function __construct(Cluster $cluster, $useRandomNodes) {
 		$this->cluster = $cluster;
 		$this->useRandomNodes = $useRandomNodes;
-		$this->connMaxAttempts = 30;
+		$this->connMaxAttempts = 3;
 		$this->connAttempts = 0;
 	}
 
@@ -57,7 +57,7 @@ class Connection {
 		} catch (Exception\ClusterException $e) {
 			if ($this->connAttempts >= $this->connMaxAttempts)
 			{
-				return;
+				throw new ConnectionException('I tried to connect to Database ' . $this->connMaxAttempts . ' times with no response.');
 			}
 
 			$this->connAttempts++;
