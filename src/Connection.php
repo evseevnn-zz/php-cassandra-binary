@@ -45,7 +45,7 @@ class Connection {
 	public function __construct(Cluster $cluster, $useRandomNodes) {
 		$this->cluster = $cluster;
 		$this->useRandomNodes = $useRandomNodes;
-		$this->connMaxAttempts = 3;
+		$this->connMaxAttempts = 2;
 		$this->connAttempts = 0;
 	}
 
