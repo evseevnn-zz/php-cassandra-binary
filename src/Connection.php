@@ -52,17 +52,23 @@ class Connection {
 	public function connect() {
 
 		try {
+
 			$this->node = $this->cluster->getNode($this->useRandomNodes);
 			$this->connection = $this->node->getConnection();
+
+		} catch (ConnectionException $e) {
+			$this->connect();
+
 		} catch (Exception\ClusterException $e) {
-			if ($this->connAttempts >= $this->connMaxAttempts)
-			{
+
+			if ($this->connAttempts >= $this->connMaxAttempts) {
 				throw new ConnectionException('I tried to connect to Database ' . $this->connMaxAttempts . ' times with no response.');
 			}
 
 			$this->connAttempts++;
-			$this->connect();
-		} catch (ConnectionException $e) {
+
+			$this->cluster->resetNodes();
+
 			$this->connect();
 		}
 	}

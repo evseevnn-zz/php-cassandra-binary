@@ -29,14 +29,17 @@ class Cluster {
 		$this->nodes[] = $host;
 	}
 
+	public function resetNodes() {
+		$this->nodes = $this->usedNodes;
+		$this->usedNodes = array();
+	}
+
 	/**
 	 * @return Node
 	 * @throws Exception\ClusterException
 	 */
 	public function getNode($random = FALSE) {
 		if (empty($this->nodes)) {
-			$this->nodes = $this->usedNodes;
-			$this->usedNodes = array();
 			throw new ClusterException('Node list is empty.');
 		}
 
@@ -55,6 +58,7 @@ class Cluster {
 				$node = new Node($nodeKey, $node);
 				unset($this->nodes[$nodeKey]);
 			} else {
+				$this->usedNodes[$nodeKey] = $node;
 				$this->usedNodes[$nodeKey] = $node;
 				$node = new Node($node);
 				unset($this->nodes[$nodeKey]);

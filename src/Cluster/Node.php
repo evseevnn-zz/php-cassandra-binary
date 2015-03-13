@@ -52,7 +52,8 @@ class Node {
 	 * @throws \Exception
 	 */
 	public function getConnection() {
-		if (!empty($this->socket)) return $this->socket;
+
+		if ( ! empty($this->socket)) return $this->socket;
 
 		$this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
@@ -60,29 +61,36 @@ class Node {
 		socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, ["sec" => self::STREAM_TIMEOUT, "usec" => 0]);
 		socket_set_nonblock($this->socket);
 
-		$time = time();
-		$timeout = 1; // seconds
+		debug("Attempt to connect to cassandra {$this->host}:{$this->port}");
 
-		// Loop until a connection is successfully made or timeout reached
-		while (!@socket_connect($this->socket, $this->host, $this->port)) {
+		$time = microtime();
+
+		while ( ! @socket_connect($this->socket, $this->host, $this->port)) {
+
 			$err = socket_last_error($this->socket);
 
 			// Connection OK!
-			if($err === 10056) {
+			if ($err === 10056 || $err === 56) {
 				break;
 			}
 
-			// If we reach timeout, throw exception and exit.
-			if ((time() - $time) >= $timeout) {
-
-				socket_set_block($this->socket);
+			// 61: server found but port unavailable (connection refused)
+			// 37: ip does not exist, i wait
+			if ($err === 10061 || $err === 61  || $err === 37 || $err === 10037) {
 				socket_close($this->socket);
-				info('Timeout reached! Unable to connect to ' . $this->host . ' on port ' . $this->port);
-				throw new ConnectionException("Unable to connect to Cassandra node.");
+
+				throw new ConnectionException('unable to connect code : ' . $err);
 			}
 
-			// 250 ms sleeping time to waitNo the next attempt.
-			usleep(250000);
+			// if timeout reaches then call exit();
+			if ((microtime() - $time) >= 1000000) {
+
+				socket_close($this->socket);
+
+				throw new ConnectionException('unable to connect code (connection timeout) : ' . $err);
+			}
+
+			usleep(100000);
 		}
 
 		// Re-block the socket if needed
