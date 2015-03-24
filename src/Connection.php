@@ -61,14 +61,13 @@ class Connection {
 
 		} catch (Exception\ClusterException $e) {
 
-			if ($this->connAttempts >= $this->connMaxAttempts) {
+			if ($this->connAttempts >= $this->connMaxAttempts)
+			{
 				throw new ConnectionException('I tried to connect to Database ' . $this->connMaxAttempts . ' times with no response.');
 			}
 
 			$this->connAttempts++;
-
 			$this->cluster->resetNodes();
-
 			$this->connect();
 		}
 	}

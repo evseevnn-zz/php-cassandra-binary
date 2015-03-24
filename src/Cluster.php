@@ -18,14 +18,16 @@ class Cluster {
 	/**
 	 * @param array $nodes
 	 */
-	public function __construct(array $nodes = []) {
+	public function __construct(array $nodes = [])
+	{
 		$this->nodes = $nodes;
 	}
 
 	/**
 	 * @param string $host
 	 */
-	public function appendNode($host) {
+	public function appendNode($host)
+	{
 		$this->nodes[] = $host;
 	}
 
@@ -35,36 +37,54 @@ class Cluster {
 	}
 
 	/**
+	 * Reset used nodes list.
+	 */
+	public function resetNodes()
+	{
+		$this->nodes = $this->usedNodes;
+		$this->usedNodes = array();
+	}
+
+	/**
 	 * @return Node
 	 * @throws Exception\ClusterException
 	 */
-	public function getNode($random = FALSE) {
-		if (empty($this->nodes)) {
+	public function getNode($random = FALSE)
+	{
+		if (empty($this->nodes))
+		{
 			throw new ClusterException('Node list is empty.');
 		}
 
-		if ($random) {
+		if ($random)
+		{
 			$nodeKey = array_rand($this->nodes);
 		}
-		else {
+		else
+		{
 			$nodeKey = array_keys($this->nodes)[0];
 		}
 
 		$node = $this->nodes[$nodeKey];
 
-		try {
-			if ((array)$node === $node) {
+		try
+		{
+			if ((array)$node === $node)
+			{
 				$this->usedNodes[$nodeKey] = $node;
 				$node = new Node($nodeKey, $node);
 				unset($this->nodes[$nodeKey]);
-			} else {
-				$this->usedNodes[$nodeKey] = $node;
+			}
+			else
+			{
 				$this->usedNodes[$nodeKey] = $node;
 				$node = new Node($node);
 				unset($this->nodes[$nodeKey]);
 			}
 
-		} catch (\InvalidArgumentException $e) {
+		}
+		catch (\InvalidArgumentException $e)
+		{
 			trigger_error($e->getMessage());
 		}
 
