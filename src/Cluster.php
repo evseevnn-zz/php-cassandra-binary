@@ -31,11 +31,6 @@ class Cluster {
 		$this->nodes[] = $host;
 	}
 
-	public function resetNodes() {
-		$this->nodes = $this->usedNodes;
-		$this->usedNodes = array();
-	}
-
 	/**
 	 * Reset used nodes list.
 	 */
