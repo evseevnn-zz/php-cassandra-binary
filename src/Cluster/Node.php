@@ -83,7 +83,7 @@ class Node
 			// 61: server found but port unavailable (connection refused)
 			// 37: ip does not exist, i wait
 			// 01: host not found
-			if ($err === "61" || $err === "37" || $err === "01")
+			if ($err === "61" || $err === "01")
 			{
 				socket_close($this->socket);
 				throw new ConnectionException('Unable to connect. Socket last error code : ' . $err);
