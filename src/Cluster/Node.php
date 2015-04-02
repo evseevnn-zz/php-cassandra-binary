@@ -27,7 +27,9 @@ class Node {
 	 */
 	private $options = [
 		'username' => null,
-		'password' => null
+		'password' => null,
+		'rcvtimeo' => ["sec" => self::STREAM_TIMEOUT, "usec" => 0],
+		'sndtimeo' => ["sec" => self::STREAM_TIMEOUT, "usec" => 0]
 	];
 
 	/**
@@ -56,7 +58,8 @@ class Node {
 
 		$this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 		socket_set_option($this->socket, getprotobyname('TCP'), TCP_NODELAY, 1);
-		socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, ["sec" => self::STREAM_TIMEOUT, "usec" => 0]);
+		socket_set_option($this->socket, SOL_SOCKET, SO_RCVTIMEO, $this->options["rcvtimeo"]);
+		socket_set_option($this->socket, SOL_SOCKET, SO_SNDTIMEO, $this->options["sndtimeo"]);
 		if (!socket_connect($this->socket, $this->host, $this->port)) {
 			throw new ConnectionException("Unable to connect to Cassandra node: {$this->host}:{$this->port}");
 		}
