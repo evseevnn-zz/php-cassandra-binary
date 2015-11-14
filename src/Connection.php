@@ -71,8 +71,13 @@ class Connection {
 	 */
 	private function fetchData($length) {
 		$data = socket_read($this->connection, $length);
+		$cleng = $length;
 		while (strlen($data) < $length) {
 			$data .= socket_read($this->connection, $length);
+			$cleng--;
+			if($cleng < 0){
+			    throw new ConnectionException('Timeout while consuming data from socket');
+			}
 		}
 		if (socket_last_error($this->connection) == 110) {
 			throw new ConnectionException('Connection timed out');
