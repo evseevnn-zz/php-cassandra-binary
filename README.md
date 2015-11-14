@@ -1,4 +1,4 @@
-PHP library for Cassandra
+DEATH ROW
 =========================
 
 [![Build Status](https://travis-ci.org/LarsFronius/php-cassandra-binary.svg?branch=master)](https://travis-ci.org/LarsFronius/php-cassandra-binary)
