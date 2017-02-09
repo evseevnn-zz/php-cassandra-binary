@@ -1,6 +1,8 @@
 PHP library for Cassandra
 =========================
 
+# Sorry, this repository deprecated and not maintained anymore. Please use https://github.com/duoshuo/php-cassandra
+
 [![Build Status](https://travis-ci.org/LarsFronius/php-cassandra-binary.svg?branch=master)](https://travis-ci.org/LarsFronius/php-cassandra-binary)
 <a href="https://codeclimate.com/github/evseevnn/php-cassandra-binary"><img src="https://codeclimate.com/github/evseevnn/php-cassandra-binary.png" /></a>
 <a href="https://scrutinizer-ci.com/g/evseevnn/php-cassandra-binary/"><img src="https://scrutinizer-ci.com/g/evseevnn/php-cassandra-binary/badges/quality-score.png?b=master" /></a>
