@@ -150,8 +150,12 @@ final class RequestFactory {
 			} else {
 				$value = null;
 			}
-			$binary = new BinaryData($column['type'], $value);
-			$body .= pack('N', strlen($binary)) . $binary;
+			if($value != null) {
+				$binary = new BinaryData($column['type'], $value);
+				$body .= pack('N', strlen($binary)) . $binary;
+			} else {
+				$body .= pack('N', -1);
+			}
 		}
 		$body .= pack('n', $consistency);
 
