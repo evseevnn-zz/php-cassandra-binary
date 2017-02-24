@@ -74,7 +74,7 @@ class DataStream {
 			$length = $this->readShort();
 			return unpack('l', strrev($this->read($length)))[1];
 		}
-		return unpack('l', strrev($this->read(4)))[1];
+		return unpack('N', $this->read(4))[1];
 	}
 
 	/**
